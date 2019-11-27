@@ -4,4 +4,7 @@ rover API. The goal here is to get comfortable using API's and React. Maybe have
 fun along the way. Cool.  
 
 ## Getting Started
-Just execute ``npm run start``.
+First you need to get an API_KEY... I'll update this README with a link soon.
+If you decide to just search (probably easy peasy), then once you have it, put the API 
+key in the empty API_KEY string in App.js. ``npm install`` followed by an ``npm run``
+should get you there... I hope.
