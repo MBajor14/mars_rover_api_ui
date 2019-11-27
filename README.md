@@ -1,4 +1,4 @@
-# MARS ROVER API UI ## (DEVELOPMENT IN PROGRESS)
+# MARS ROVER API UI (*Development in progress*)
 This is a simple react app (NOT built using create-react-app CLI) that uses NASA's mars 
 rover API. The goal here is to get comfortable using API's and React. Maybe have some 
 fun along the way. Cool.  
