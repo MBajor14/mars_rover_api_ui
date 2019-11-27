@@ -1,0 +1,16 @@
+.App {
+    height: 100vh;
+}
+
+.bg_mars {
+    background: url('./img/mars_bg.jpg') center center no-repeat;
+    background-size: cover;
+}
+
+.main-container {
+    height: 75%;
+    width: 80%;
+    background-color: rgba(100, 119, 134, 0.45);
+    border-radius: 30px;
+    border: double thick slategrey;
+}
