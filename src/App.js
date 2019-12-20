@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import Title from './components/Title/Title';
 import Form from './components/Form/Form';
 import Menu from './components/Menu/Menu';
 // import Gallery from '../../Gallery/Gallery';
@@ -11,7 +12,10 @@ class App extends Component{
     constructor(props){
         super(props);
         this.state = {
+            title: 'Mars Rover Station',
+            page: 'menu',
             data: [],
+            roverEnum: ['Curiousity', 'Opportunity', 'Spirit'],
             selectedRover: null,
             rovers: null
         }
@@ -22,7 +26,7 @@ class App extends Component{
             .then(response => response.json())
             .then(data => {
                 console.log('rovers: ', data);
-                this.setState({
+                this.setState({ 
                 selectedRover: data.rovers[0],
                 rovers: data.rovers
                 });
@@ -55,15 +59,37 @@ class App extends Component{
         }
     };
 
+    menuSelect = (event, roverId) => {
+        event.persist();
+        event.preventDefault();
+
+        this.setState({ 
+            page: 'form',
+            selectedRover: this.state.roverEnum[roverId]
+        });
+
+        console.log('menu select executed');
+        console.log('event', event);
+        console.log('rover id', roverId);
+        console.log('selected rover', this.state.selectedRover);
+        console.log('rover enum', this.state.roverEnum[roverId]);
+    };
+
     render(){
         return(
             <div className="app bg_mars d-flex justify-content-center align-items-center">
                 <div className="main-container d-flex flex-column text-white p-3">
-                    <h1 className="text-center mt-3">Mars Rover Gallery</h1>
-
-                    <Menu />
-
-                    {/* <Form handleSubmit={this.handleSubmit} handleSelect={(roverID) => this.roverSelect(roverID)} selectedRover={this.state.selectedRover}/> */}
+                    {   
+                        this.state.page === 'menu' &&
+                        <Fragment>
+                            <Title title={this.state.title}/>
+                            <Menu onMenuSelect={(event, id) => this.menuSelect(event, id)}/>
+                        </Fragment>
+                    }
+                    {   
+                        this.state.page === 'form' &&
+                        <Form handleSubmit={this.handleSubmit} handleSelect={(roverID) => this.roverSelect(roverID)} selectedRover={this.state.selectedRover}/>
+                    }
                     {
                         // this.state.data && <Gallery data={this.state.data} />
                     }
