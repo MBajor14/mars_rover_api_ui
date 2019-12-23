@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import Title from './components/Title/Title';
 import Form from './components/Form/Form';
 import Menu from './components/Menu/Menu';
-// import Gallery from '../../Gallery/Gallery';
+import Gallery from './components/Gallery/Gallery';
 
 import './App.css';
 
@@ -14,8 +14,8 @@ class App extends Component{
         this.state = {
             title: 'Mars Rover Station',
             page: 'menu',
-            data: [],
-            roverEnum: ['Curiousity', 'Opportunity', 'Spirit'],
+            images: [],
+            roverEnum: [ { id: 5, name: 'Curiousity' }, { id: 6, name: 'Opportunity' }, { id: 7, name: 'Spirit' }],
             selectedRover: null,
             rovers: null
         }
@@ -27,7 +27,7 @@ class App extends Component{
             .then(data => {
                 console.log('rovers: ', data);
                 this.setState({ 
-                selectedRover: data.rovers[0],
+                selectedRover: null,
                 rovers: data.rovers
                 });
             })
@@ -40,22 +40,29 @@ class App extends Component{
         console.log('handle submit: ', event);
         console.log('handle submit: ', event.target);
 
-        // const
-        //     rover_name = this.state.selectedRover,
-        //     // rover_name = event.target.elements.rover.value,
-        //     // date = event.target.elements.date.value,
-        //     date = '2019-8-9',
-        //     api_call = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover_name}/photos?earth_date=${date}&api_key=${API_KEY}`),
-        //     data = api_call.json()
-        //     ;
-        // this.setState({data: data});
-    };
+        console.log('date', event.target.elements.date.value);
+        console.log('selected rover ', this.state.selectedRover);
 
-    roverSelect = (roverID) => {
-        const { rovers } = this.state;
-        if(rovers && (rovers.id !== roverID)){
-            const newSelectedRover = this.state.rovers.find(rover => rover.id === roverID);
-            this.setState({ selectedRover: newSelectedRover });
+        const rover_name = this.state.selectedRover.name;
+        const date = event.target.elements.date.value;
+        // const date = '2019-09-05';
+
+        if(rover_name.length > 0 && date){
+            fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover_name}/photos?earth_date=${date}&api_key=${API_KEY}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('data', data);
+                if(data && data.photos.length > 0){
+                    this.setState({ 
+                        images: data.photos,
+                        page: 'images'
+                    });
+                }
+                else{
+                    console.log('No images for this date.');
+                }
+            })
+            .catch(error => { throw new Error(error)});
         }
     };
 
@@ -63,35 +70,50 @@ class App extends Component{
         event.persist();
         event.preventDefault();
 
+        const { rovers, selectedRover } = this.state;
+
+        if(rovers){
+            this.setState({ selectedRover: rovers.find(rover => rover.id === roverId) });
+        }
+
         this.setState({ 
-            page: 'form',
-            selectedRover: this.state.roverEnum[roverId]
+            page: 'form'
         });
 
         console.log('menu select executed');
         console.log('event', event);
         console.log('rover id', roverId);
-        console.log('selected rover', this.state.selectedRover);
-        console.log('rover enum', this.state.roverEnum[roverId]);
+        console.log('selected rover', selectedRover);
     };
 
+    returnToMenu = (event) => {
+        event.persist();
+        event.preventDefault();
+        console.log('%c returnToMenu()', 'color:magenta;');
+        console.log('%c event', 'color:cyan;', event);
+        this.setState({ page: 'menu' });
+    }
+
     render(){
+        const { title, page, selectedRover, images } = this.state;
+
         return(
             <div className="app bg_mars d-flex justify-content-center align-items-center">
                 <div className="main-container d-flex flex-column text-white p-3">
                     {   
-                        this.state.page === 'menu' &&
+                        page === 'menu' &&
                         <Fragment>
-                            <Title title={this.state.title}/>
+                            <Title title={title}/>
                             <Menu onMenuSelect={(event, id) => this.menuSelect(event, id)}/>
                         </Fragment>
                     }
                     {   
-                        this.state.page === 'form' &&
-                        <Form handleSubmit={this.handleSubmit} handleSelect={(roverID) => this.roverSelect(roverID)} selectedRover={this.state.selectedRover}/>
+                        page === 'form' &&
+                        <Form returnToMenu={this.returnToMenu} handleSubmit={this.handleSubmit} selectedRover={selectedRover}/>
                     }
                     {
-                        // this.state.data && <Gallery data={this.state.data} />
+                        page === 'images' && images != null &&
+                        <Gallery returnToMenu={this.returnToMenu} images={images} />
                     }
                 </div>
             </div>
