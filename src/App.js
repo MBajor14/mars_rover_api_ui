@@ -1,8 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import Title from './components/Title/Title';
-import Form from './components/Form/Form';
-import Menu from './components/Menu/Menu';
-import Gallery from './components/Gallery/Gallery';
+import Navbar from './components/Navbar/Navbar.jsx';
 
 import './App.css';
 
@@ -25,7 +22,7 @@ class App extends Component{
         fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=${API_KEY}`)
             .then(response => response.json())
             .then(data => {
-                console.log('rovers: ', data);
+                console.log('rovers: ', {data});
                 this.setState({ 
                 selectedRover: null,
                 rovers: data.rovers
@@ -98,24 +95,8 @@ class App extends Component{
         const { title, page, selectedRover, images } = this.state;
 
         return(
-            <div className="app bg_mars d-flex justify-content-center align-items-center">
-                <div className="main-container d-flex flex-column text-white p-3">
-                    {   
-                        page === 'menu' &&
-                        <Fragment>
-                            <Title title={title}/>
-                            <Menu onMenuSelect={(event, id) => this.menuSelect(event, id)}/>
-                        </Fragment>
-                    }
-                    {   
-                        page === 'form' &&
-                        <Form returnToMenu={this.returnToMenu} handleSubmit={this.handleSubmit} selectedRover={selectedRover}/>
-                    }
-                    {
-                        page === 'images' && images != null &&
-                        <Gallery returnToMenu={this.returnToMenu} images={images} />
-                    }
-                </div>
+            <div className="app bg_mars">
+                <Navbar/>
             </div>
         );
     };
