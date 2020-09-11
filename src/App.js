@@ -5,7 +5,7 @@ import Gallery from './components/Gallery/Gallery.jsx';
 
 import './App.css';
 
-const API_KEY = '';
+const API_KEY = 'olSoXXK6OHWLWSUNNctUYDey38o7sMm2ViqAvpXW';
 
 export const RoverEnum = {
     Curiousity: 5,
@@ -78,7 +78,7 @@ class App extends Component{
 
     setDisplaySize(size) {
         this.setState({ displaySize: size });
-    }
+    };
 
     render(){
         const { selectedRover, images, displaySize } = this.state;
