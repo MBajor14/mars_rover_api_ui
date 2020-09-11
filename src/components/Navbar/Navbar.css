@@ -30,4 +30,20 @@ nav{
 .navbar-item:hover{
     color: orange;
     background-color: rgba(101, 176, 182, 0.473);
+    cursor: pointer;
+
+    animation-name: navbar-item-hover;
+    animation-duration: 0.75s;
+    animation-timing-function: ease-out;
+}
+
+@keyframes navbar-item-hover {
+    from{
+        color: white;
+        background-color: rgb(131, 182, 101);
+    }
+    to{
+        color: orange;
+        background-color: rgba(101, 176, 182, 0.473);
+    }
 }
