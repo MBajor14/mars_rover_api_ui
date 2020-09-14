@@ -5,7 +5,7 @@ import Gallery from './components/Gallery/Gallery.jsx';
 
 import './App.css';
 
-const API_KEY = 'olSoXXK6OHWLWSUNNctUYDey38o7sMm2ViqAvpXW';
+const API_KEY = '';
 
 export const RoverEnum = {
     Curiousity: 5,
@@ -24,11 +24,14 @@ class App extends Component{
         super(props);
         this.selectRover = this.selectRover.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.changeDate = this.changeDate.bind(this);
         this.state = {
             images: [],
             selectedRover: null,
+            selectedDate: null,
             rovers: null,
-            displaySize: 1
+            displaySize: 1,
+            tabs: []
         }
     };
 
@@ -36,7 +39,6 @@ class App extends Component{
         fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=${API_KEY}`)
             .then(response => response.json())
             .then(data => {
-                console.table(data.rovers);
                 this.setState({ 
                     rovers: data.rovers,
                     selectedRover: data.rovers[0]
@@ -46,9 +48,7 @@ class App extends Component{
     }
 
     handleSubmit() {
-        const roverName = this.state.selectedRover.name;
-        // const date = event.target.elements.date.value;
-        const date = '2020-03-05';
+        const { selectedDate: date, selectedRover: { name: roverName }, tabs } = this.state;
 
         if(roverName && date){
             fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${date}&api_key=${API_KEY}`)
@@ -56,9 +56,10 @@ class App extends Component{
             .then(data => {
                 console.log('data', data);
                 if(data && data.photos.length > 0){
+                    const newTab = { date, images: data.photos, displaySize: 1 };
                     this.setState({ 
                         images: data.photos,
-                        page: 'images'
+                        tabs: [...tabs, newTab]
                     });
                 }
                 else{
@@ -69,28 +70,47 @@ class App extends Component{
         }
     };
 
+    changeDate(event) {
+        this.setState({ selectedDate: event.target.value });
+    }
+
     selectRover(roverId) {
         const selectedRover = this.state.rovers.find(rover => rover.id === roverId);
         selectedRover.roverImgSrc  = RoverImageSources.Curiousity;
         this.setState({selectedRover});
-        console.log(selectedRover);
     };
 
     setDisplaySize(size) {
+        if(size == 0){
+            this.setState({ images: [] });
+            return;
+        }
         this.setState({ displaySize: size });
     };
 
     render(){
-        const { selectedRover, images, displaySize } = this.state;
+        const { selectedRover, images, displaySize, tabs } = this.state;
 
         return(
             <div className="app bg_mars">
                 <Navbar selectRover={this.selectRover}/>
                 <RoverInfo selectedRover={selectedRover}/>
 
+                <input type="date" onChange={this.changeDate}/>
                 <button onClick={this.handleSubmit}>Get Images!</button>
 
-                <Gallery displaySize={displaySize} setDisplaySize={(size) => this.setDisplaySize(size)} images={images}/>
+                <div>
+                        {tabs.map((tab, index) => <button key={index} onClick={() => this.setState({ images: tab.images, displaySize: tab.displaySize })}>{tab.date}</button>)}
+                </div>
+
+                <div className="d-flex">
+                    <button onClick={() => this.setDisplaySize(1)}>12</button>
+                    <button onClick={() => this.setDisplaySize(3)}>4</button>
+                    <button onClick={() => this.setDisplaySize(6)}>2</button>
+                    <button onClick={() => this.setDisplaySize(0)}>clear</button> 
+                </div>
+
+                <Gallery displaySize={displaySize} images={images}/>
             </div>
         );
     };

@@ -31,16 +31,19 @@ nav{
     color: orange;
     background-color: rgba(101, 176, 182, 0.473);
     cursor: pointer;
+    border-bottom: thick solid rgba(255, 254, 166, 0.774);
 
     animation-name: navbar-item-hover;
-    animation-duration: 0.75s;
+    animation-duration: infinite;
+    /* animation-duration: 0.75s; */
     animation-timing-function: ease-out;
 }
 
 @keyframes navbar-item-hover {
     from{
-        color: white;
-        background-color: rgb(131, 182, 101);
+        color: rgb(255, 194, 80);
+        background-color: rgba(140, 181, 184, 0.473);
+        
     }
     to{
         color: orange;
